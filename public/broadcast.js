@@ -1,5 +1,6 @@
 let list = document.getElementById("videolist")
 
+let throttle;
 
 const videoElement = document.querySelector("video");
 videoElement.volume = 0.2
@@ -42,13 +43,17 @@ socket.on("connect", () => {
 // События плеера /////////////////////
 
 videoElement.onplay = (event) => {
-  if (event.isTrusted)
+  if (event.isTrusted && !throttle){
     socket.emit("videoplayed", videoElement.currentTime);
+    Throttle()
+  }
 }
 
 videoElement.onpause = (event) => {
-  if (event.isTrusted)
+  if (event.isTrusted && !throttle){
     socket.emit("videopaused");
+    Throttle()
+  }
 }
 
 ///////////////////////////////////////
