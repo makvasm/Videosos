@@ -1,0 +1,70 @@
+#player {
+  width: 100%;
+  margin: auto;
+  height: 60vh;
+}
+#player-wrapper {
+  margin: 20px auto;
+  width: 70%;
+}
+
+.container {
+  width: 80vw;
+}
+
+body {
+  background-color: rgb(29, 29, 29);
+}
+
+form {
+  width: 100%; 
+  height: 100%; 
+  display: flex;
+}
+
+#videolist {
+  height: 400px;
+  overflow: auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+.preview {
+  margin: auto;
+}
+.preview > img {
+  height: 150px;
+  border: 2px solid lightgreen;
+  margin: 5px;
+}
+
+.viewed {
+  filter: brightness(0.4);
+}
+
+
+
+
+
+
+
+
+/* Скроллбар */
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #525252;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(233, 233, 233);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(255, 255, 255);
+}
