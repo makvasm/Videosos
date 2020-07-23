@@ -53,11 +53,6 @@ videoElement.onpause = (event) => {
 
 ///////////////////////////////////////
 
-// Синхронизация //////////////////////
-function Sync() {
-  socket.emit("videosync", videoElement.currentTime);
-}
-///////////////////////////////////////
 
 // Загрузить видео и триггернуть событие
 function LoadVideo(event, direct = null) {

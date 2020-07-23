@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 
 const ParseThread = require("./utils").ParseThread;
 
-let broadcaster;
 let currentVideo;
 
 const port = process.env.PORT || 3000;
@@ -38,10 +37,6 @@ io.sockets.on("connection", socket => {
   socket.on("videoplayed", (time) => {
     socket.broadcast.emit("videoplayed", time);
   })
-
-  socket.on("disconnect", () => {
-    socket.to(broadcaster).emit("disconnectPeer", socket.id);
-  });
 
 });
 
