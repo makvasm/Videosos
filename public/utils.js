@@ -1,7 +1,6 @@
 import { socket } from "./broadcast"
 
 let list = document.getElementById("videolist")
-export let player = new Playerjs({id:"player"});
 
 $("#player-wrapper").resizable({
     aspectRatio: 16 / 9,
@@ -68,8 +67,8 @@ export function LoadVideo(event, direct = null) {
     uri = new URL(uri)
 
     if (uri.pathname.match(/.*(mp4|webm)/)) {
-        socket.emit("videochanged", uri.href);
-        player.api("play", uri.href);
+        socket.emit("videochanged", uri.href)
+        player.src = uri.href
     } else {
         ParseVideos(uri)
             .then(videos => {

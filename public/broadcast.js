@@ -1,8 +1,9 @@
-import { LoadFromLocalStorage, player } from "./utils"
+import { LoadFromLocalStorage } from "./utils"
 
 export const socket = io.connect(window.location.origin);
 
 let playerNode = document.getElementById("player")
+playerNode.volume = 0.1
 
 LoadFromLocalStorage()
 
@@ -13,24 +14,21 @@ socket.on("connect", () => {
 
 
   socket.on("init", (uri) => {
-    player.api("play", uri)
+    playerNode.src = uri
   })
 
   socket.on("videochanged", (uri) => {
-    player.api("play", uri);
+    playerNode.src = uri
   });
 
-  socket.on("videoplayed", () => {
-    player.api("play");
+  socket.on("videoplayed", (time) => {
+    playerNode.play()
+    playerNode.currentTime = time
   });
 
   socket.on("videopaused", () => {
-    player.api("pause");
+    playerNode.pause()
   });
-
-  socket.on("videoseeked", (time) => {
-      player.api("seek", time)
-  })
 
 });
 
@@ -39,15 +37,15 @@ socket.on("connect", () => {
 // События плеера /////////////////////
 
 playerNode.addEventListener("play", (event) => {
-  socket.emit("videoplayed")
+  if(event.isTrusted){
+    socket.emit("videoplayed", playerNode.currentTime)
+  }
 })
 playerNode.addEventListener("pause", (event) => {
-  socket.emit("videopaused")
+  if(event.isTrusted){
+    socket.emit("videopaused")
+  }
 })
-playerNode.addEventListener("seek", (event) => {
-  socket.emit("videoseeked", event.info)
-})
-
 
 
 window.onunload =
