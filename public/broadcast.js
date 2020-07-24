@@ -46,13 +46,13 @@ socket.on("connect", () => {
 // События плеера /////////////////////
 
 videoElement.onplay = (event) => {
-  if (event.isTrusted) {
+  if (event.isTrusted && videoElement.readyState > 2) {
     socket.emit("videoplayed", videoElement.currentTime);
   }
 }
 
 videoElement.onpause = (event) => {
-  if (event.isTrusted) {
+  if (event.isTrusted && videoElement.readyState > 2) {
     socket.emit("videopaused");
   }
 }
