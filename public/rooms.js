@@ -45,5 +45,5 @@ function CreateRoom(event) {
 }
 
 
-GetRoomList()
-    .then(rooms => RenderRooms(rooms))
+// GetRoomList()
+//     .then(rooms => RenderRooms(rooms))

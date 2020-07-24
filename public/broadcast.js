@@ -14,15 +14,15 @@ LoadFromLocalStorage()
 
 socket.on("connect", () => {
   
-  socket.emit("joined", window.location.pathname)
+  // socket.emit("joined", window.location.pathname)
 
-  // socket.emit("init")
+  socket.emit("init")
 
 
-  // socket.on("init", (uri) => {
-  //   if (videoElement.src != uri)
-  //     videoElement.src = uri;
-  // })
+  socket.on("init", (uri) => {
+    if (videoElement.src != uri)
+      videoElement.src = uri;
+  })
 
   socket.on("videochanged", (uri) => {
     if (videoElement.src != uri)
