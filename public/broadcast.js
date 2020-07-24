@@ -13,7 +13,7 @@ LoadFromLocalStorage()
 // События сокета /////////////////////
 
 socket.on("connect", () => {
-  
+
   // socket.emit("joined", window.location.pathname)
 
   socket.emit("init")
@@ -46,13 +46,13 @@ socket.on("connect", () => {
 // События плеера /////////////////////
 
 videoElement.onplay = (event) => {
-  if (event.isTrusted && videoElement.readyState == 4) {
+  if (event.isTrusted) {
     socket.emit("videoplayed", videoElement.currentTime);
   }
 }
 
 videoElement.onpause = (event) => {
-  if (event.isTrusted && videoElement.readyState == 4) {
+  if (event.isTrusted) {
     socket.emit("videopaused");
   }
 }
