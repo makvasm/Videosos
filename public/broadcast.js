@@ -22,10 +22,12 @@ socket.on("connect", () => {
   });
 
   socket.on("videoplayed", () => {
+    console.log("videoplayed")
     playerNode.play()
   });
 
   socket.on("videopaused", () => {
+    console.log("videopaused")
     playerNode.pause()
   });
 
