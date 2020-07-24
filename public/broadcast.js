@@ -43,16 +43,14 @@ socket.on("connect", () => {
 // События плеера /////////////////////
 
 videoElement.onplay = (event) => {
-  if (event.isTrusted && !throttle){
+  if (event.isTrusted && videoElement.readyState == 4){
     socket.emit("videoplayed", videoElement.currentTime);
-    Throttle()
   }
 }
 
 videoElement.onpause = (event) => {
-  if (event.isTrusted && !throttle){
+  if (event.isTrusted && videoElement.readyState == 4){
     socket.emit("videopaused");
-    Throttle()
   }
 }
 
