@@ -13,13 +13,16 @@ LoadFromLocalStorage()
 // События сокета /////////////////////
 
 socket.on("connect", () => {
+  
+  socket.emit("joined", window.location.pathname)
 
-  socket.emit("init")
+  // socket.emit("init")
 
-  socket.on("init", (uri) => {
-    if (videoElement.src != uri)
-      videoElement.src = uri;
-  })
+
+  // socket.on("init", (uri) => {
+  //   if (videoElement.src != uri)
+  //     videoElement.src = uri;
+  // })
 
   socket.on("videochanged", (uri) => {
     if (videoElement.src != uri)
@@ -43,13 +46,13 @@ socket.on("connect", () => {
 // События плеера /////////////////////
 
 videoElement.onplay = (event) => {
-  if (event.isTrusted && videoElement.readyState == 4){
+  if (event.isTrusted && videoElement.readyState == 4) {
     socket.emit("videoplayed", videoElement.currentTime);
   }
 }
 
 videoElement.onpause = (event) => {
-  if (event.isTrusted && videoElement.readyState == 4){
+  if (event.isTrusted && videoElement.readyState == 4) {
     socket.emit("videopaused");
   }
 }
@@ -59,9 +62,9 @@ videoElement.onpause = (event) => {
 
 // Загрузить видео и триггернуть событие
 function LoadVideo(event, direct = null) {
-  
+
   let uri;
-  if(!direct){
+  if (!direct) {
     event.preventDefault()
     uri = event.target.url.value;
     event.target.url.value = "";

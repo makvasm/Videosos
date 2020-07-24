@@ -49,9 +49,3 @@ function LoadFromLocalStorage(){
         RenderTable(videos);
     }
 }
-
-
-// function Throttle(){
-//     throttle = true;
-//     setTimeout(() => throttle = false, 300)
-// }

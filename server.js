@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser")
 
 const path = require("path")
 
@@ -18,6 +19,7 @@ const server = http.createServer(app);
 const io = require("socket.io")(server);
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json())
+app.use(cookieParser())
 
 
 io.sockets.on("error", e => console.log(e));
@@ -25,41 +27,39 @@ io.sockets.on("error", e => console.log(e));
 
 io.sockets.on("connection", socket => {
 
-  socket.on("init", () => {
-    socket.emit("init", currentVideo)
+  socket.on("joined", pathname => {
+    socket.join(pathname)
+    socket.rooms.currentRoom
   })
 
+  // socket.on("init", () => {
+  //   socket.emit("init", currentVideo)
+  // })
+
   socket.on("videochanged", (uri) => {
-    socket.to(socket.rooms[0]).emit("videochanged", uri);
+    socket.to(socket.rooms.currentRoom).emit("videochanged", uri);
     currentVideo = uri;
   })
 
   socket.on("videopaused", () => {
-    socket.to(socket.rooms[0]).emit("videopaused");
+    socket.to(socket.rooms.currentRoom).emit("videopaused");
   })
 
   socket.on("videoplayed", (time) => {
-    socket.to(socket.rooms[0]).emit("videoplayed", time);
+    socket.to(socket.rooms.currentRoom).emit("videoplayed", time);
   })
 
 });
 
 app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/rooms.html")
+})
+
+app.get("/:room", (req, res) => {
   res.sendFile(__dirname + "/public/broadcast.html")
 })
 
-// app.get("/:room", (req, res) => {
-//   res.sendFile(__dirname + "/public/broadcast.html")
-// })
 
-
-
-app.get("/joinRoom", (req, res) => {
-  let room
-  if(room = rooms.find(e => e.pass === req.query.roompass)){
-    res.redirect(`/${req.query.roomname}`)
-  } else res.redirect("/")
-})
 
 app.get("/api/getroomlist", (req, res) => {
   let resp = []
@@ -85,6 +85,7 @@ app.post("/api/createroom", (req, res) => {
       pass: req.body.roompass,
     })
   }
+  res.redirect("/")
 })
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));

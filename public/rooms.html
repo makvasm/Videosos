@@ -15,10 +15,10 @@
     <div class="container">
         <ul id="roomlist" class="list-group">
         </ul>
-        <form>
+        <form onsubmit="CreateRoom(event)">
             <div>
-                <input type="text" name="roomname" class="form-control">
-                <input type="password" name="roompass" class="form-control">
+                <input required type="text" name="roomname" class="form-control">
+                <input required type="text" name="roompass" class="form-control">
             </div>
             <button class="btn btn-dark">Создать комнату</button>
         </form>
