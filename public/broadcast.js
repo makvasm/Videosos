@@ -1,90 +1,52 @@
-let list = document.getElementById("videolist")
+import { LoadFromLocalStorage, player } from "./utils"
 
-let throttle;
+export const socket = io.connect(window.location.origin);
 
-const videoElement = document.querySelector("video");
-videoElement.volume = 0.2
+let playerNode = document.getElementById("player")
 
-const socket = io.connect(window.location.origin);
-
-// Попытаться найти видео в локальном хранилище
 LoadFromLocalStorage()
 
-// События сокета /////////////////////
 
 socket.on("connect", () => {
-
-  // socket.emit("joined", window.location.pathname)
 
   socket.emit("init")
 
 
   socket.on("init", (uri) => {
-    if (videoElement.src != uri)
-      videoElement.src = uri;
+    player.api("play", uri)
   })
 
   socket.on("videochanged", (uri) => {
-    if (videoElement.src != uri)
-      videoElement.src = uri;
+    player.api("play", uri);
   });
 
-  socket.on("videoplayed", (time) => {
-    videoElement.currentTime = time;
-    videoElement.play();
+  socket.on("videoplayed", () => {
+    player.api("play");
   });
 
   socket.on("videopaused", () => {
-    videoElement.pause();
+    player.api("pause");
   });
 
+  socket.on("videoseeked", (time) => {
+      player.api("seek", time)
+  })
+
 });
-///////////////////////////////////////
 
 
 
 // События плеера /////////////////////
 
-videoElement.onplay = (event) => {
-  if (event.isTrusted && videoElement.readyState > 2) {
-    socket.emit("videoplayed", videoElement.currentTime);
-  }
-}
-
-videoElement.onpause = (event) => {
-  if (event.isTrusted && videoElement.readyState > 2) {
-    socket.emit("videopaused");
-  }
-}
-
-///////////////////////////////////////
-
-
-// Загрузить видео и триггернуть событие
-function LoadVideo(event, direct = null) {
-
-  let uri;
-  if (!direct) {
-    event.preventDefault()
-    uri = event.target.url.value;
-    event.target.url.value = "";
-  } else {
-    uri = direct
-  }
-
-  uri = new URL(uri)
-
-  if (uri.pathname.match(/.*(mp4|webm)/)) {
-    socket.emit("videochanged", uri);
-    videoElement.src = uri;
-  } else {
-    ParseVideos(uri)
-      .then(videos => {
-        RenderTable(videos)
-      })
-  }
-}
-///////////////////////////////////////
+playerNode.addEventListener("play", (event) => {
+  socket.emit("videoplayed")
+})
+playerNode.addEventListener("pause", (event) => {
+  socket.emit("videopaused")
+})
+playerNode.addEventListener("seek", (event) => {
+  socket.emit("videoseeked", event.info)
+})
 
 
 
@@ -92,7 +54,3 @@ window.onunload =
   window.onbeforeunload = () => {
     socket.close();
   }
-
-function handleError(error) {
-  console.error("Error: ", error);
-}

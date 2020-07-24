@@ -1,10 +1,14 @@
+import { socket } from "./broadcast"
+
+let list = document.getElementById("videolist")
+export let player = new Playerjs({id:"player"});
 
 $("#player-wrapper").resizable({
     aspectRatio: 16 / 9,
     alsoResize: "#player",
 });
 
-function ParseVideos(uri) {
+export function ParseVideos(uri) {
     return fetch("/api/getvideos", {
         method: "POST",
         headers: {
@@ -23,7 +27,7 @@ function ParseVideos(uri) {
 }
 
 
-function RenderTable(videos) {
+export function RenderTable(videos) {
     list.textContent = ""
     videos.forEach(video => {
         let a = document.createElement("a")
@@ -42,10 +46,34 @@ function RenderTable(videos) {
 }
 
 
-function LoadFromLocalStorage(){
+export function LoadFromLocalStorage() {
     let videos;
-    if(videos = localStorage.getItem("videos")){
+    if (videos = localStorage.getItem("videos")) {
         videos = JSON.parse(videos)
         RenderTable(videos);
+    }
+}
+
+export function LoadVideo(event, direct = null) {
+
+    let uri;
+    if (!direct) {
+        event.preventDefault()
+        uri = event.target.url.value;
+        event.target.url.value = "";
+    } else {
+        uri = direct
+    }
+
+    uri = new URL(uri)
+
+    if (uri.pathname.match(/.*(mp4|webm)/)) {
+        socket.emit("videochanged", uri.href);
+        player.api("play", uri.href);
+    } else {
+        ParseVideos(uri)
+            .then(videos => {
+                RenderTable(videos)
+            })
     }
 }

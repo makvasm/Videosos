@@ -8,7 +8,7 @@ const path = require("path")
 const ParseThread = require("./utils").ParseThread;
 
 let currentVideo;
-// let rooms = [];
+let throttle = false
 
 const port = process.env.PORT || 3000;
 
@@ -46,6 +46,14 @@ io.sockets.on("connection", socket => {
 
   socket.on("videoplayed", (time) => {
     socket.broadcast.emit("videoplayed", time);
+  })
+
+  socket.on("videoseeked", (time) => {
+    if(!throttle){
+      socket.broadcast.emit("videoseeked", time)
+      throttle = true
+      setTimeout(() => throttle = false, 1000)
+    }
   })
 
 });
