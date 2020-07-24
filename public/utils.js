@@ -53,5 +53,5 @@ function LoadFromLocalStorage(){
 
 function Throttle(){
     throttle = true;
-    setTimeout(() => throttle = false, 1000)
+    setTimeout(() => throttle = false, 300)
 }
