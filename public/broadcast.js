@@ -23,7 +23,6 @@ socket.on("connect", () => {
 
   socket.on("videoplayed", (time) => {
     playerNode.play()
-    playerNode.currentTime = time
   });
 
   socket.on("videopaused", () => {
@@ -38,7 +37,7 @@ socket.on("connect", () => {
 
 playerNode.addEventListener("play", (event) => {
   if(event.isTrusted){
-    socket.emit("videoplayed", playerNode.currentTime)
+    socket.emit("videoplayed")
   }
 })
 playerNode.addEventListener("pause", (event) => {

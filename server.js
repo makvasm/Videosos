@@ -43,8 +43,8 @@ io.sockets.on("connection", socket => {
     socket.broadcast.emit("videopaused");
   })
 
-  socket.on("videoplayed", (time) => {
-    socket.broadcast.emit("videoplayed", time);
+  socket.on("videoplayed", (tie) => {
+    socket.broadcast.emit("videoplayed");
   })
 
 });
