@@ -21,7 +21,7 @@ socket.on("connect", () => {
     playerNode.src = uri
   });
 
-  socket.on("videoplayed", (time) => {
+  socket.on("videoplayed", () => {
     playerNode.play()
   });
 
