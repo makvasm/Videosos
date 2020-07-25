@@ -21,10 +21,10 @@ socket.on("connect", () => {
     playerNode.src = uri
   });
 
-  socket.on("videoplayed", (time, id) => {
+  socket.on("videoplayed", async (time, id) => {
     if(id !== socket.id){
-      playerNode.currentTime = time
-      playerNode.play()
+      await playerNode.play()
+      if(playerNode.currentTime < time - 2 && playerNode.currentTime > time + 2) playerNode.currentTime = time
     } else {
       console.log("it's me")
     }
