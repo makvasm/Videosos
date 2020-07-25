@@ -4,8 +4,10 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser")
 
 const path = require("path")
+const mongodb = require("mongodb")
 
 const ParseThread = require("./utils").ParseThread;
+const connect = require("./utils").connect;
 
 let currentVideo;
 
@@ -15,9 +17,10 @@ const http = require("http");
 const server = http.createServer(app);
 
 const io = require("socket.io")(server);
+
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json())
-// app.use(cookieParser())
+app.use(cookieParser())
 
 
 io.sockets.on("error", e => console.log(e));
@@ -40,11 +43,11 @@ io.sockets.on("connection", socket => {
   })
 
   socket.on("videopaused", () => {
-    socket.broadcast.emit("videopaused");
+    socket.broadcast.emit("videopaused", socket.id);
   })
 
-  socket.on("videoplayed", (tie) => {
-    socket.broadcast.emit("videoplayed");
+  socket.on("videoplayed", (time) => {
+    socket.broadcast.emit("videoplayed", time, socket.id);
   })
 
 });
@@ -53,37 +56,77 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/broadcast.html")
 })
 
-// app.get("/:room", (req, res) => {
-//   res.sendFile(__dirname + "/public/broadcast.html")
-// })
+
+app.get("/room/:id", async (req, res) => {
+  let con = await mongodb.connect("mongodb://localhost:27017/", { useNewUrlParser: true, useUnifiedTopology: true })
+
+  let rooms = con.db("videosos").collection("rooms")
+
+  rooms.findOne({
+    _id: req.params.id
+  }, (err, result) => {
+    con.close()
+    if (err) return res.redirect("/")
+    if (result._id === req.cookies.authed) res.sendFile(__dirname + "/public/broadcast.html")
+    else res.redirect("/")
+  })
+})
 
 
+app.get("/room", async (req, res) => {
+  let con = await mongodb.connect("mongodb://localhost:27017/", { useNewUrlParser: true, useUnifiedTopology: true })
 
-// app.get("/api/getroomlist", (req, res) => {
-//   let resp = []
-//   rooms.forEach(room => {
-//     resp.push(room.name)
-//   })
-//   res.json(resp)
-// })
+  let rooms = con.db("videosos").collection("rooms")
+  rooms.findOne({
+    name: req.query.roomname,
+    pass: req.query.roompass
+  }, (err, result) => {
+    con.close()
+    if (err) res.redirect("/")
+    else {
+      res.cookie("authed", result._id, { "maxAge": 1000 * 60 * 60 * 24 })
+      res.redirect(`/${resul._id}`)
+    }
+  })
+
+})
+
+
+app.get("/api/getroomlist", async (req, res) => {
+  let resp = []
+  let con = await mongodb.connect("mongodb://localhost:27017/", { useNewUrlParser: true, useUnifiedTopology: true })
+
+  let rooms = con.db("videosos").collection("rooms")
+
+  rooms.find().forEach(room => {
+    resp.push(room.name)
+  }, () => {
+    con.close()
+    res.json(resp)
+  })
+})
+
 
 app.post("/api/getvideos", async (req, res) => {
   if (!req.body.uri) return res.send("")
   res.json(await ParseThread(req.body.uri))
 })
 
-// app.post("/api/createroom", (req, res) => {
-//   if (rooms.length > 20) return res.send("")
 
-//   if (!rooms.find(room => {
-//     if (room.pass === req.body.roompass || room.name === req.body.roomname) return true
-//   })) {
-//     rooms.push({
-//       name: req.body.roomname,
-//       pass: req.body.roompass,
-//     })
-//   }
-//   res.redirect("/")
-// })
+app.post("/api/createroom", async (req, res) => {
+  let con = await mongodb.connect("mongodb://localhost:27017/", { useNewUrlParser: true, useUnifiedTopology: true })
+  let rooms = con.db("videosos").collection("rooms")
+
+  rooms.insertOne({
+    name: req.body.roomname,
+    pass: req.body.roompass
+  }, (err, result) => {
+    if (err) res.send(err)
+    else res.send(result.name)
+    con.close()
+  })
+})
+
+
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));

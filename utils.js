@@ -1,5 +1,6 @@
 const needle = require("needle");
 const cheerio = require("cheerio");
+const mongodb = require("mongodb")
 
 async function ParseThread(uri) {
     let doc = await needle("get", uri)
@@ -21,5 +22,5 @@ async function ParseThread(uri) {
 }
 
 module.exports = {
-    ParseThread
+    ParseThread,
 }

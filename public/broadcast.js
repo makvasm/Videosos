@@ -21,14 +21,21 @@ socket.on("connect", () => {
     playerNode.src = uri
   });
 
-  socket.on("videoplayed", () => {
-    console.log("videoplayed")
-    playerNode.play()
+  socket.on("videoplayed", (time, id) => {
+    if(id !== socket.id){
+      playerNode.currentTime = time
+      playerNode.play()
+    } else {
+      console.log("it's me")
+    }
   });
 
-  socket.on("videopaused", () => {
-    console.log("videopaused")
-    playerNode.pause()
+  socket.on("videopaused", (id) => {
+    if(id !== socket.id){
+      playerNode.pause()
+    } else {
+      console.log("it's me")
+    }
   });
 
 });
@@ -39,7 +46,7 @@ socket.on("connect", () => {
 
 playerNode.addEventListener("play", (event) => {
   if(event.isTrusted){
-    socket.emit("videoplayed")
+    socket.emit("videoplayed", playerNode.currentTime)
   }
 })
 playerNode.addEventListener("pause", (event) => {
