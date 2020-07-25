@@ -54,7 +54,7 @@ export function LoadFromLocalStorage() {
 }
 
 export function LoadVideo(event, direct = null) {
-
+    
     let uri;
     if (!direct) {
         event.preventDefault()

@@ -9,8 +9,6 @@ const mongodb = require("mongodb")
 const ParseThread = require("./utils").ParseThread;
 const connect = require("./utils").connect;
 
-let currentVideo;
-
 const port = process.env.PORT || 3000;
 
 const http = require("http");
@@ -26,12 +24,16 @@ app.use(cookieParser())
 io.sockets.on("error", e => console.log(e));
 
 
+let currentVideo;
+let host;
+
+
 io.sockets.on("connection", socket => {
 
-  // socket.on("joined", pathname => {
-  //   socket.join(pathname)
-  //   socket.rooms.currentRoom
-  // })
+  if(!host){
+    host = socket
+    socket.emit("host")
+  }
 
   socket.on("init", () => {
     socket.emit("init", currentVideo)
@@ -43,11 +45,15 @@ io.sockets.on("connection", socket => {
   })
 
   socket.on("videopaused", () => {
-    socket.broadcast.emit("videopaused", socket.id);
+    socket.broadcast.emit("videopaused");
   })
 
   socket.on("videoplayed", (time) => {
-    socket.broadcast.emit("videoplayed", time, socket.id);
+    socket.broadcast.emit("videoplayed", time);
+  })
+
+  socket.on("disconnect", () => {
+    if(socket === host) host = null
   })
 
 });
