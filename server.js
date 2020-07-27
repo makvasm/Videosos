@@ -28,12 +28,12 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 
 
-io.sockets.on("error", e => console.log(e));
-
 
 let currentVideo;
 let host;
 
+
+io.sockets.on("error", e => console.log(e));
 
 io.sockets.on("connection", socket => {
   console.log("connect")
