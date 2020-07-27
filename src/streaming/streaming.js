@@ -25,7 +25,6 @@ peer.on("call", (call) => {
     call.answer()
 
     call.on("stream", stream => {
-        console.log("stream")
         player.srcObject = stream
     })
 })

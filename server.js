@@ -36,7 +36,6 @@ let host;
 io.sockets.on("error", e => console.log(e));
 
 io.sockets.on("connection", socket => {
-  console.log("connect")
 
   if (!host) {
     host = socket

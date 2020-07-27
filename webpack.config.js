@@ -1,7 +1,7 @@
 const path = require("path")
 
 module.exports = {
-    mode: "development",
+    mode: "production",
     entry: {
         videoplayer: "./src/videoplayer/videoplayer.js",
         streaming: "./src/streaming/streaming.js"
