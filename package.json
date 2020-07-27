@@ -17,6 +17,7 @@
     "express": "^4.17.1",
     "mongodb": "^3.5.9",
     "needle": "^2.5.0",
+    "peer": "^0.5.3",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {

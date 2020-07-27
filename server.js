@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const { ExpressPeerServer } = require('peer');
+
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser")
 
@@ -16,6 +18,11 @@ const server = http.createServer(app);
 
 const io = require("socket.io")(server);
 
+const peerServer = ExpressPeerServer(server, {
+  debug: true
+});
+
+app.use('/peer', peerServer);
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json())
 app.use(cookieParser())
@@ -29,8 +36,9 @@ let host;
 
 
 io.sockets.on("connection", socket => {
+  console.log("connect")
 
-  if(!host){
+  if (!host) {
     host = socket
     socket.emit("host")
   }
@@ -53,15 +61,18 @@ io.sockets.on("connection", socket => {
   })
 
   socket.on("disconnect", () => {
-    if(socket === host) host = null
+    if (socket === host) host = null
   })
 
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/public/broadcast.html")
+  res.sendFile(__dirname + "/public/videoplayer.html")
 })
 
+app.get("/streaming", (req, res) => {
+  res.sendFile(path.join(__dirname, "/public/streaming.html"))
+})
 
 app.get("/room/:id", async (req, res) => {
   let con = await mongodb.connect("mongodb://localhost:27017/", { useNewUrlParser: true, useUnifiedTopology: true })
@@ -73,7 +84,7 @@ app.get("/room/:id", async (req, res) => {
   }, (err, result) => {
     con.close()
     if (err) return res.redirect("/")
-    if (result._id === req.cookies.authed) res.sendFile(__dirname + "/public/broadcast.html")
+    if (result._id === req.cookies.authed) res.sendFile(__dirname + "/public/videoplayer.html")
     else res.redirect("/")
   })
 })
