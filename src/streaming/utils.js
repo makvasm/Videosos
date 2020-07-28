@@ -36,7 +36,11 @@ connectBtn.addEventListener("click", event => {
 
 let displayMediaOptions = {
     video: {
-        cursor: "always"
+        cursor: "always",
+        framerate : {
+            ideal: 60,
+            max: 60
+        }
     },
     audio: true
 };
