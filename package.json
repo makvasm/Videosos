@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "dev": "npx webpack --watch && npm run start",
+    "start": "npx webpack && node server.js"
   },
   "keywords": [],
   "author": "makvasm",
@@ -18,9 +19,15 @@
     "mongodb": "^3.5.9",
     "needle": "^2.5.0",
     "peer": "^0.5.3",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.11.4",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.10.4",
+    "babel-loader": "^8.1.0",
     "css-loader": "^3.6.0",
     "eslint": "7.0.0",
     "style-loader": "^1.2.1",

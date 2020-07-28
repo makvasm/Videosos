@@ -1,6 +1,6 @@
 import utils, { player, mediaStream, controls } from "./utils"
 
-let chars = "DEF1G2OPQ23RS3TUV5564MN1OPQ23RS3TU3RS3TUV5564MN1V55WXYZ".toLowerCase()
+let chars = "DEF1G2OPQ23RS3TUV5564MN1OPQ23RS3TU3RS3TUV5564MN1V55WXYZ".toLowerCase() + "DEF1G2OPQ23RS3TUV5564MN1OPQ23RS3TU3RS3TUV5564MN1V55WXYZ"
 export let id = ""
 for(let i = 0; i < 15; i++){
     id += chars[Math.floor(Math.random() * chars.length)]
