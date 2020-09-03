@@ -1,4 +1,4 @@
-import utils, { player, mediaStream, controls } from "./utils"
+import { player, mediaStream } from "./utils"
 
 let chars = "DEF1G2OPQ23RS3TUV5564MN1OPQ23RS3TU3RS3TUV5564MN1V55WXYZ".toLowerCase() + "DEF1G2OPQ23RS3TUV5564MN1OPQ23RS3TU3RS3TUV5564MN1V55WXYZ"
 export let id = ""
