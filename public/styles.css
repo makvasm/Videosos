@@ -1,48 +1,6 @@
-#player {
-  width: 100%;
-  margin: auto;
-  height: 60vh;
+#main {
+  padding: 10px;
 }
-#player-wrapper {
-  margin: 20px auto;
-  width: 70%;
-}
-
-.container {
-  width: 80vw;
-}
-
-body {
-  background-color: rgb(29, 29, 29);
-}
-
-form {
-  width: 100%; 
-  height: 100%; 
-  display: flex;
-}
-
-#videolist {
-  height: 400px;
-  overflow: auto;
-  display: flex;
-  flex-wrap: wrap;
-}
-.preview {
-  margin: auto;
-}
-.preview > img {
-  height: 150px;
-  border: 2px solid lightgreen;
-  margin: 5px;
-}
-
-.viewed {
-  filter: brightness(0.4);
-}
-
-
-
 
 
 /* Скроллбар */

@@ -5,23 +5,27 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx webpack --watch && npm run start",
-    "start": "npx webpack && node server.js"
+    "server": "node server.js",
+    "prod": "npx webpack --mode=production",
+    "watch": "npx webpack --watch",
+    "start": "npm run prod && npm run server"
   },
   "keywords": [],
   "author": "makvasm",
   "license": "MIT",
   "dependencies": {
+    "@babel/plugin-transform-regenerator": "^7.12.1",
     "body-parser": "^1.19.0",
+    "bootstrap": "^4.5.3",
     "cheerio": "^1.0.0-rc.3",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
-    "mongodb": "^3.5.9",
     "needle": "^2.5.0",
     "peer": "^0.5.3",
     "react": "^16.13.1",
+    "react-bootstrap": "^1.4.0",
     "react-dom": "^16.13.1",
-    "socket.io": "^2.3.0"
+    "react-router-dom": "^5.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.4",
