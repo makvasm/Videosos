@@ -75,8 +75,8 @@ app.get("/streaming", (req, res) => {
 
 
 app.post("/api/getvideos", async (req, res) => {
-  if (!req.body.uri) return res.send("")
-  res.json(await ParseThread(req.body.uri))
+  if (!req.body.url) return res.send({})
+  res.json(await ParseThread(req.body.url))
 })
 
 

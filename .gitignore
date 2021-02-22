@@ -1,1 +1,5 @@
 node_modules
+public/Player.js
+public/init.js
+public/streaming.js
+public/videoplayer.js

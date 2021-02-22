@@ -4,7 +4,9 @@ module.exports = {
     mode: "production",
     entry: {
         videoplayer: "./src/videoplayer/videoplayer.js",
-        streaming: "./src/streaming/streaming.js"
+        streaming: "./src/streaming/streaming.js",
+        Player: "./src/videoplayer/Player.js",
+        init: "./src/videoplayer/init.js",
     },
     output : {
         filename: "[name].js",

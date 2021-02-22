@@ -15,9 +15,9 @@
     <div id="player-wrapper">
       <video controls id="player"></video>
     </div>
-    <form onsubmit="LoadVideo(event)">
+    <form id="video_load_form">
       <input name="url" required class="form-control">
-      <button type="submit" class="btn btn-dark">Загрузить</button>
+      <button name="load_button" type="button" class="btn btn-dark">Загрузить</button>
     </form>
     <div id="videolist"></div>
   </div>
@@ -28,7 +28,9 @@
     integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script src="./videoplayer.js"></script>
+  <script src="./Player.js"></script>
+  <script src="./init.js"></script>
+  <!-- <script src="./videoplayer.js"></script> -->
 </body>
 
 </html>
