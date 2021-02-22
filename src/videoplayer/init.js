@@ -6,7 +6,7 @@ let urlInput       = loadForm.url
 let videoListNode  = document.getElementById('videolist')
 let playerNode     = document.getElementById('player')
 
-let PlayerInstance = new Player(playerNode, videoListNode)
+export let PlayerInstance = new Player(playerNode, videoListNode)
 
 loadButton.addEventListener('click', (event) => {
     let url        = urlInput.value

@@ -1,83 +1,113 @@
-const express = require("express");
-const app = express();
-const { ExpressPeerServer } = require('peer');
+require('dotenv').config()
 
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser")
+const DBConf = require('./dbconfig').DBConf
+const { Sequelize, DataTypes } = require('sequelize')
 
-const path = require("path")
-const mongodb = require("mongodb")
+const dbconf = new DBConf()
+const db = new Sequelize(dbconf.url())
 
-const ParseThread = require("./utils").ParseThread;
-const connect = require("./utils").connect;
 
-const port = process.env.PORT || 3000;
+const Room = db.define('Room', {
+  name: {
+    type: DataTypes.STRING
+  },
+  video: {
+    type: DataTypes.TEXT({
+      length: 500
+    }),
+  }
+})
 
-const http = require("http");
-const server = http.createServer(app);
+db.sync({ force: true }).then(() => {
+  Room.create({
+    name: 'main',
+  })
+})
 
-const io = require("socket.io")(server);
 
-const peerServer = ExpressPeerServer(server, {
-  debug: true
-});
 
-app.use('/peer', peerServer);
-app.use(express.static(__dirname + "/public"));
+
+const express      = require('express');
+const app          = express();
+
+const bodyParser   = require('body-parser');
+const cookieParser = require('cookie-parser')
+
+const path         = require('path')
+
+const ParseThread  = require('./utils').ParseThread;
+
+const port         = process.env.PORT || 3000;
+
+const http         = require('http');
+const server       = http.createServer(app);
+
+const io           = require('socket.io')(server);
+
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json())
 app.use(cookieParser())
 
 
+io.sockets.on('error', e => console.log(e));
 
-let currentVideo;
-let host;
+io.sockets.on('connection', socket => {
 
-
-io.sockets.on("error", e => console.log(e));
-
-io.sockets.on("connection", socket => {
-
-  if (!host) {
-    host = socket
-    socket.emit("host")
-  }
-
-  socket.on("init", () => {
-    socket.emit("init", currentVideo)
+  socket.on('videochanged', (uri) => {
+    socket.broadcast.emit('videochanged', uri);
   })
 
-  socket.on("videochanged", (uri) => {
-    socket.broadcast.emit("videochanged", uri);
-    currentVideo = uri;
+  socket.on('videopaused', () => {
+    socket.broadcast.emit('videopaused');
   })
 
-  socket.on("videopaused", () => {
-    socket.broadcast.emit("videopaused");
-  })
-
-  socket.on("videoplayed", (time) => {
-    socket.broadcast.emit("videoplayed", time);
-  })
-
-  socket.on("disconnect", () => {
-    if (socket === host) host = null
+  socket.on('videoplayed', (time) => {
+    socket.broadcast.emit('videoplayed', time);
   })
 
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/public/videoplayer.html")
+
+// WEB
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/videoplayer.html')
 })
 
-app.get("/streaming", (req, res) => {
-  res.sendFile(path.join(__dirname, "/public/streaming.html"))
+app.get('/streaming', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/streaming.html'))
 })
 
 
-app.post("/api/getvideos", async (req, res) => {
-  if (!req.body.url) return res.send({})
+
+// API
+app.post('/api/getvideos', async (req, res) => {
+  if (!req.body.url) return res.status(400).send()
   res.json(await ParseThread(req.body.url))
 })
+
+app.post('/api/createRoom', async (req, res) => {
+  return res.send({})
+})
+
+app.post('/api/setRoomVideo', async (req, res) => {
+  if (!req.body.url || !req.body.name) return res.status(400).send()
+  let resp = await Room.update({ video: req.body.url }, {
+    where: {
+      name: req.body.name
+    }
+  })
+  res.send(resp)
+})
+
+app.post('/api/getRoomByName', async (req, res) => {
+  if(!req.body.name) return res.status(400).send()
+  return res.json(await Room.findOne({
+    where: {
+      name: req.body.name
+    }
+  }))
+})
+
 
 
 

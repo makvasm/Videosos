@@ -1,3 +1,5 @@
+import Room from "./Room"
+
 export default class Player {
     constructor(playerNode, listNode) {
         let context = this
@@ -13,8 +15,23 @@ export default class Player {
         ]
 
         this.playerElem = playerNode
-        this.listElem = listNode
-        this.setVideo('https://2ch.hk/b/src/240712890/16139530195460.mp4')
+        this.listElem   = listNode
+        this.room       = new Room()
+        this.listeners  = []
+    }
+
+    addEventListener(event, cb){
+        this.listeners.push({
+            event,
+            cb
+        })
+    }
+
+    emit(event, ...args){
+        this.listeners.forEach((listener, index) => {
+            if(listener.event === event)
+                listener.cb(...args)
+        })
     }
 
     setVolume(value) {
@@ -71,11 +88,12 @@ export default class Player {
     renderList(videos) {
         this.listElem.textContent = ""
         videos.forEach(video => {
-            let a = document.createElement("a")
-            let img = document.createElement("img")
+            let a       = document.createElement("a")
+            let img     = document.createElement("img")
             a.className = "preview"
-            a.href = video.video
-            img.src = video.preview
+            a.href      = video.video
+            img.src     = video.preview
+            img.loading = "lazy"
 
             a.appendChild(img)
             this.listElem.appendChild(a)
@@ -105,9 +123,41 @@ export default class Player {
     setVideo(url) {
         try {
             url = new URL(url)
+            this.room.setRoomVideo(url)
+            this.playerElem.src = url.href
+            this.emit('videochanged', url)
+        } catch (e) {
+            throw new Error('Ошибка при смене адреса видео')
+        }
+    }
+
+    setVideoNotManually(url){
+        try {
+            url                 = new URL(url)
             this.playerElem.src = url.href
         } catch (e) {
             throw new Error('Ошибка при смене адреса видео')
         }
+    }
+
+    async init() {
+        let room = await this.room.fetchRoomByName()
+        this.setVideoNotManually(room.video)
+    }
+
+    play() {
+        return this.playerElem.play()
+    }
+
+    pause() {
+        return this.playerElem.pause()
+    }
+
+    currentTime() {
+        return this.playerElem.currentTime
+    }
+
+    setTime(value) {
+        return this.playerElem.currentTime = value
     }
 }
