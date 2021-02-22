@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx webpack --watch && npm run start",
-    "start": "npx webpack && node server.js"
+    "start": "npx webpack && node server.js",
+    "postinstall": "webpack -p --config ./webpack.config.js --progress"
   },
   "keywords": [],
   "author": "makvasm",
