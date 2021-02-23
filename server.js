@@ -4,7 +4,7 @@ const DBConf = require('./dbconfig').DBConf
 const { Sequelize, DataTypes } = require('sequelize')
 
 const dbconf = new DBConf()
-const db = new Sequelize(dbconf.url())
+const db = new Sequelize(dbconf.url(), { ssl: true })
 
 
 const Room = db.define('Room', {

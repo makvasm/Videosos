@@ -15,21 +15,21 @@ export default class Player {
         ]
 
         this.playerElem = playerNode
-        this.listElem   = listNode
-        this.room       = new Room()
-        this.listeners  = []
+        this.listElem = listNode
+        this.room = new Room()
+        this.listeners = []
     }
 
-    addEventListener(event, cb){
+    addEventListener(event, cb) {
         this.listeners.push({
             event,
             cb
         })
     }
 
-    emit(event, ...args){
+    emit(event, ...args) {
         this.listeners.forEach((listener, index) => {
-            if(listener.event === event)
+            if (listener.event === event)
                 listener.cb(...args)
         })
     }
@@ -88,11 +88,11 @@ export default class Player {
     renderList(videos) {
         this.listElem.textContent = ""
         videos.forEach(video => {
-            let a       = document.createElement("a")
-            let img     = document.createElement("img")
+            let a = document.createElement("a")
+            let img = document.createElement("img")
             a.className = "preview"
-            a.href      = video.video
-            img.src     = video.preview
+            a.href = video.video
+            img.src = video.preview
             img.loading = "lazy"
 
             a.appendChild(img)
@@ -131,9 +131,9 @@ export default class Player {
         }
     }
 
-    setVideoNotManually(url){
+    setVideoNotManually(url) {
         try {
-            url                 = new URL(url)
+            url = new URL(url)
             this.playerElem.src = url.href
         } catch (e) {
             throw new Error('Ошибка при смене адреса видео')
@@ -145,11 +145,13 @@ export default class Player {
         this.setVideoNotManually(room.video)
     }
 
-    play() {
+    play(stopPropagation = false) {
+        if (stopPropagation) Player.stopPausePlayEvents = true
         return this.playerElem.play()
     }
 
-    pause() {
+    pause(stopPropagation = false) {
+        if (stopPropagation) Player.stopPausePlayEvents = true
         return this.playerElem.pause()
     }
 

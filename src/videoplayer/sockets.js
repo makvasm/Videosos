@@ -1,5 +1,6 @@
 export const socket = io.connect(window.location.origin);
 import { PlayerInstance } from './init'
+import Player from './Player';
 
 socket.on("connect", () => {
 
@@ -11,11 +12,11 @@ socket.on("connect", () => {
 
   socket.on("videoplayed", async (time) => {
     PlayerInstance.setTime(time)
-    await PlayerInstance.play()
+    await PlayerInstance.play(true)
   });
 
   socket.on("videopaused", () => {
-    PlayerInstance.pause()
+    PlayerInstance.pause(true)
   });
 
 });
@@ -29,10 +30,20 @@ PlayerInstance.addEventListener('videochanged', (url) => {
 })
 
 PlayerInstance.playerElem.addEventListener("play", (event) => {
-  socket.emit("videoplayed", PlayerInstance.currentTime())
+  try {
+    if(Player.stopPausePlayEvents) event.stopPropagation()
+    socket.emit("videoplayed", PlayerInstance.currentTime())
+  } finally {
+    Player.stopPausePlayEvents = false
+  }
 })
 PlayerInstance.playerElem.addEventListener("pause", (event) => {
-  socket.emit("videopaused")
+  try {
+    if(Player.stopPausePlayEvents) event.stopPropagation()
+    socket.emit("videopaused")
+  } finally {
+    Player.stopPausePlayEvents = false
+  }
 })
 
 
