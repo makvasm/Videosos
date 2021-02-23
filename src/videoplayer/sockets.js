@@ -4,20 +4,20 @@ import Player from './Player';
 
 socket.on("connect", () => {
 
-  PlayerInstance.init()
+	PlayerInstance.init()
 
-  socket.on("videochanged", (url) => {
-    PlayerInstance.setVideoNotManually(url)
-  });
+	socket.on("videochanged", (url) => {
+		PlayerInstance.setVideoNotManually(url)
+	});
 
-  socket.on("videoplayed", async (time) => {
-    PlayerInstance.setTime(time)
-    await PlayerInstance.play(true)
-  });
+	socket.on("videoplayed", async (time) => {
+		PlayerInstance.setTime(time)
+		await PlayerInstance.play(true)
+	});
 
-  socket.on("videopaused", () => {
-    PlayerInstance.pause(true)
-  });
+	socket.on("videopaused", () => {
+		PlayerInstance.pause(true)
+	});
 
 });
 
@@ -26,28 +26,28 @@ socket.on("connect", () => {
 // События плеера
 
 PlayerInstance.addEventListener('videochanged', (url) => {
-  socket.emit('videochanged', url)
+	socket.emit('videochanged', url)
 })
 
 PlayerInstance.playerElem.addEventListener("play", (event) => {
-  try {
-    if(Player.stopPausePlayEvents) event.stopPropagation()
-    socket.emit("videoplayed", PlayerInstance.currentTime())
-  } finally {
-    Player.stopPausePlayEvents = false
-  }
+	try {
+		if (!Player.stopPausePlayEvents)
+			socket.emit("videoplayed", PlayerInstance.currentTime())
+	} finally {
+		Player.stopPausePlayEvents = false
+	}
 })
 PlayerInstance.playerElem.addEventListener("pause", (event) => {
-  try {
-    if(Player.stopPausePlayEvents) event.stopPropagation()
-    socket.emit("videopaused")
-  } finally {
-    Player.stopPausePlayEvents = false
-  }
+	try {
+		if (!Player.stopPausePlayEvents)
+			socket.emit("videopaused")
+	} finally {
+		Player.stopPausePlayEvents = false
+	}
 })
 
 
 window.onunload =
-  window.onbeforeunload = () => {
-    socket.close();
-  }
+	window.onbeforeunload = () => {
+		socket.close();
+	}

@@ -85,9 +85,9 @@ export default class Player {
             })
     }
 
-    renderList(videos) {
+    async renderList(videos) {
         this.listElem.textContent = ""
-        videos.forEach(video => {
+        videos.forEach(async video => {
             let a = document.createElement("a")
             let img = document.createElement("img")
             a.className = "preview"
@@ -103,6 +103,10 @@ export default class Player {
                 e.target.className = "viewed"
                 this.setVideo.call(this, video.video)
             }
+
+            await new Promise(async (resolve) => {
+                setTimeout(resolve, 100)
+            })
         })
     }
 
@@ -117,7 +121,7 @@ export default class Player {
     async loadThread(url) {
         console.log('loadthread')
         let videos = await this.fetchVideos.call(this, url)
-        this.renderList.call(this, videos)
+        return await this.renderList.call(this, videos)
     }
 
     setVideo(url) {
