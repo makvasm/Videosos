@@ -119,7 +119,6 @@ export default class Player {
     }
 
     async loadThread(url) {
-        console.log('loadthread')
         let videos = await this.fetchVideos.call(this, url)
         return await this.renderList.call(this, videos)
     }
@@ -165,5 +164,9 @@ export default class Player {
 
     setTime(value) {
         return this.playerElem.currentTime = value
+    }
+
+    src() {
+        return this.playerElem.src
     }
 }

@@ -10,12 +10,14 @@ socket.on("connect", () => {
 		PlayerInstance.setVideoNotManually(url)
 	});
 
-	socket.on("videoplayed", async (time) => {
+	socket.on("videoplayed", async (time, url) => {
+		if(PlayerInstance.src() !== url) return
 		PlayerInstance.setTime(time)
 		await PlayerInstance.play(true)
 	});
 
-	socket.on("videopaused", () => {
+	socket.on("videopaused", (url) => {
+		if(PlayerInstance.src() !== url) return
 		PlayerInstance.pause(true)
 	});
 
@@ -32,7 +34,7 @@ PlayerInstance.addEventListener('videochanged', (url) => {
 PlayerInstance.playerElem.addEventListener("play", (event) => {
 	try {
 		if (!Player.stopPausePlayEvents)
-			socket.emit("videoplayed", PlayerInstance.currentTime())
+			socket.emit("videoplayed", PlayerInstance.currentTime(), url)
 	} finally {
 		Player.stopPausePlayEvents = false
 	}
@@ -40,7 +42,7 @@ PlayerInstance.playerElem.addEventListener("play", (event) => {
 PlayerInstance.playerElem.addEventListener("pause", (event) => {
 	try {
 		if (!Player.stopPausePlayEvents)
-			socket.emit("videopaused")
+			socket.emit("videopaused", url)
 	} finally {
 		Player.stopPausePlayEvents = false
 	}
