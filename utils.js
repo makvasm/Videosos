@@ -1,6 +1,5 @@
 const needle = require("needle");
 const cheerio = require("cheerio");
-const mongodb = require("mongodb")
 
 async function ParseThread(url) {
     let doc = await needle("get", url)
