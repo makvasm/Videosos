@@ -1,50 +1,35 @@
 import Room from "./Room"
 
-export default class Player {
-    constructor(playerNode, listNode) {
-        let context = this
-        this.parsers = [
-            {
-                'parser': context.isThread,
-                'action': context.loadThread
-            },
-            {
-                'parser': context.isVideo,
-                'action': context.setVideo
-            }
-        ]
+export default function Player(playerNode, listNode)
+{
+    console.log(this)
+    this.playerElem = playerNode
+    this.listElem   = listNode
+    this.room       = new Room()
+    this.listeners  = []
 
-        this.playerElem = playerNode
-        this.listElem = listNode
-        this.room = new Room()
-        this.listeners = []
-    }
-
-    addEventListener(event, cb) {
+    this.addEventListener = (event, cb) => {
         this.listeners.push({
             event,
             cb
         })
     }
 
-    emit(event, ...args) {
+    this.emit = (event, ...args) => {
+        console.log('emit')
+        console.log(this)
         this.listeners.forEach((listener, index) => {
-            if (listener.event === event)
+            if (listener.event === event){
                 listener.cb(...args)
+            }
         })
     }
 
-    setVolume(value) {
+    this.setVolume = (value) => {
         this.playerElem.volume = value || 1
     }
 
-    loadFromEvent(url) {
-        try {
-            url = new URL(url)
-        } catch (e) {
-            throw e
-        }
-
+    this.loadFromEvent = (url) => {
         let isActionRunned = false
         this.parsers.forEach((object, index) => {
             if (isActionRunned) return null
@@ -52,22 +37,22 @@ export default class Player {
             let parser = object.parser
             let action = object.action
 
-            if (parser.call(this, url)) {
+            if (parser(url)) {
                 isActionRunned = true
-                action.call(this, url)
+                action(url)
             }
         })
     }
 
-    isThread(url) {
-        return url.href.match(/2ch.hk\/[A-z]{1,}\/res\/[0-9]*.\.html/)
+    this.isThread = (url) => {
+        return url.match(/2ch\..*\/[A-z]+\/res\/[0-9]+\.html$/)
     }
 
-    isVideo(url) {
-        return url.href.match(/.*(mp4|webm)/)
+    this.isVideo = (url) => {
+        return url.match(/2ch\..*\/[A-z]+\/src\/[0-9]+\/[0-9]+\.(webm|mp4)$/)
     }
 
-    async fetchVideos(url) {
+    this.fetchVideos = async (url) => {
         return fetch("/api/getvideos", {
             method: "POST",
             headers: {
@@ -85,14 +70,14 @@ export default class Player {
             })
     }
 
-    async renderList(videos) {
+    this.renderList = async (videos) => {
         this.listElem.textContent = ""
         videos.forEach(async video => {
-            let a = document.createElement("a")
-            let img = document.createElement("img")
+            let a       = document.createElement("a")
+            let img     = document.createElement("img")
             a.className = "preview"
-            a.href = video.video
-            img.src = video.preview
+            a.href      = video.video
+            img.src     = video.preview
             img.loading = "lazy"
 
             a.appendChild(img)
@@ -101,72 +86,82 @@ export default class Player {
             a.onclick = (e) => {
                 e.preventDefault()
                 e.target.className = "viewed"
-                this.setVideo.call(this, video.video)
+                this.setVideo(video.video)
             }
 
-            await new Promise(async (resolve) => {
+            return await new Promise(async (resolve) => {
                 setTimeout(resolve, 100)
             })
         })
     }
 
-    loadFromLocalStorage() {
-        let videos;
+    this.loadFromLocalStorage = () =>{
+        let videos
         if (videos = localStorage.getItem("videos")) {
             videos = JSON.parse(videos)
-            this.renderList.call(this, videos);
+            this.renderList(videos)
         }
     }
 
-    async loadThread(url) {
-        let videos = await this.fetchVideos.call(this, url)
-        return await this.renderList.call(this, videos)
+    this.loadThread = async (url) => {
+        let videos = await this.fetchVideos(url)
+        return await this.renderList(videos)
     }
 
-    setVideo(url) {
+    this.setVideo = (url) => {
         try {
-            url = new URL(url)
             this.room.setRoomVideo(url)
-            this.playerElem.src = url.href
+            this.playerElem.src = url
             this.emit('videochanged', url)
         } catch (e) {
             throw new Error('Ошибка при смене адреса видео')
         }
     }
 
-    setVideoNotManually(url) {
+    this.setVideoNotManually = (url) => {
         try {
-            url = new URL(url)
-            this.playerElem.src = url.href
+            this.playerElem.src = url
         } catch (e) {
             throw new Error('Ошибка при смене адреса видео')
         }
     }
 
-    async init() {
+    this.init = async () => {
         let room = await this.room.fetchRoomByName()
         this.setVideoNotManually(room.video)
     }
 
-    play(stopPropagation = false) {
+    this.play = (stopPropagation = false) => {
         if (stopPropagation) Player.stopPausePlayEvents = true
         return this.playerElem.play()
     }
 
-    pause(stopPropagation = false) {
+    this.pause = (stopPropagation = false) => {
         if (stopPropagation) Player.stopPausePlayEvents = true
         return this.playerElem.pause()
     }
 
-    currentTime() {
+    this.currentTime = () => {
         return this.playerElem.currentTime
     }
 
-    setTime(value) {
+    this.setTime = (value) => {
         return this.playerElem.currentTime = value
     }
 
-    src() {
+    this.src = () => {
         return this.playerElem.src
     }
+
+    let context = this
+    this.parsers = [
+        {
+            'parser': context.isThread,
+            'action': context.loadThread
+        },
+        {
+            'parser': context.isVideo,
+            'action': context.setVideo
+        }
+    ]
 }

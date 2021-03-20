@@ -60,16 +60,16 @@ io.sockets.on('error', e => console.log(e));
 
 io.sockets.on('connection', socket => {
 
-  socket.on('videochanged', (uri) => {
-    socket.broadcast.emit('videochanged', uri);
+  socket.on('videochanged', (url) => {
+    socket.broadcast.emit('videochanged', url);
   })
 
-  socket.on('videopaused', () => {
-    socket.broadcast.emit('videopaused');
+  socket.on('videopaused', (url) => {
+    socket.broadcast.emit('videopaused', url);
   })
 
-  socket.on('videoplayed', (time) => {
-    socket.broadcast.emit('videoplayed', time);
+  socket.on('videoplayed', (time, url) => {
+    socket.broadcast.emit('videoplayed', time, url);
   })
 
 });
