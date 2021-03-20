@@ -12,7 +12,8 @@ module.exports = {
         compress: true,
         port: 9000,
         watchContentBase: true,
-        progress: true
+        progress: true,
+        hot: true,
     },
     module: {
         rules: [
