@@ -2,7 +2,6 @@ import Room from "./Room"
 
 export default function Player(playerNode, listNode)
 {
-    console.log(this)
     this.playerElem = playerNode
     this.listElem   = listNode
     this.room       = new Room()
@@ -16,8 +15,6 @@ export default function Player(playerNode, listNode)
     }
 
     this.emit = (event, ...args) => {
-        console.log('emit')
-        console.log(this)
         this.listeners.forEach((listener, index) => {
             if (listener.event === event){
                 listener.cb(...args)
