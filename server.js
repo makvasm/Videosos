@@ -7,8 +7,9 @@ const dbconf = new DBConf()
 const db = new Sequelize(dbconf.url(), {
   dialect : 'postgres',
   protocol: 'postgres',
-  dialectOptions: {
-      ssl: true
+  ssl: {
+    require: true,
+    rejectUnauthorized: false
   }
 })
 
